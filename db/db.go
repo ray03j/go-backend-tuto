@@ -1,8 +1,13 @@
+// migrationとは
+// auto migration とは
 package db
 
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //use postgreSQL in gorm
+	// "gorm.io/driver/postgres"
+
+	"go-backend-tuto/entity"
 )
 
 var (
@@ -12,10 +17,15 @@ var (
 
 // Init is initialize db from main function
 func Init() {
-	db, err = gorm.Open("postgres", "host=0.0.0.0 port=5432 user=gorm dbname=gorm password=gorm sslmode=disable")
+	db, err = gorm.Open(
+		"postgres", 
+		"host=localhost port=5432 user=gorm dbname=go-backend-tuto_db_1 password=gorm sslmode=disable",
+	)
 	if err != nil {
 		panic(err)
 	}
+
+	autoMigration()
 }
 
 //GetDB is called in module
@@ -25,7 +35,11 @@ func GetDB() *gorm.DB {
 
 // Close is closing db
 func Close() {
-	if err := db.Close; err != nil {
+	if err := db.Close(); err != nil {
 		panic(err)
 	}
+}
+
+func autoMigration() {
+	db.AutoMigrate(&entity.User{})
 }
